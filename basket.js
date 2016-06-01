@@ -1,14 +1,25 @@
 var shoppingBasket = {
   items: [],
-  addItem: function(item) {
-    this.items.push(item);
-    this.totalPrice += item.price;
+  addItem: function(item,number) {
+    var price = item.price * number;
+    if(item.getOneFree === true ) {
+      var buyItem = { name: item.name, quantity: 
+        number * 2, totalPrice: item.price }
+    } else {
+      var buyItem = { name: item.name, quantity: 
+        number, totalPrice: item.price }
+    }
+    
+    this.totalPrice += price;
+    this.items.push(buyItem);
+    console.log("item= ", this.items)
+    
   },
   removeItem: function(item) {
     
     for(var i = 0; i < this.items.length; i++) {
       if(this.items[i].name === item ){
-          this.totalPrice -= this.items[i].price;
+          this.totalPrice -= this.items[i].totalPrice;
           this.items.splice( i,1)
             
       }
@@ -22,8 +33,8 @@ var shoppingBasket = {
   },
   discountOverTwenty: function() {
      for(var i = 0; i < this.items.length; i++) {
-      if(this.items[i].price > 20 ) {
-        this.totalPrice -= this.procentage(10,this.items[i].price)
+      if(this.items[i].totalPrice > 20 ) {
+        shoppingBasket.totalPrice -= this.procentage(10,this.items[i].totalPrice) * this.items[i].quantity;
       }
      }
   },
@@ -31,12 +42,14 @@ var shoppingBasket = {
     var result = this.procentage(number, this.totalPrice);
     this.totalPrice -= result;
   },
-  buyOneGetOneFree: function(item) {
-    this.addItem(item);
-    var freeItem = { name: item.name, price: 0 };
-    this.addItem(freeItem);
+  buyOneGetOneFree: function(item,number) {
+    if( item.getOneFree === true ) {
+      item.quantity = number * 2;
+    }
+     return item;
   }
 }
+
 
 module.exports = shoppingBasket;
 
